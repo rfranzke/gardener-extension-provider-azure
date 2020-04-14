@@ -4,7 +4,7 @@ The [`core.gardener.cloud/v1beta1.Shoot` resource](https://github.com/gardener/g
 
 In this document we are describing how this configuration looks like for Azure and provide an example `Shoot` manifest with minimal configuration that you can use to create an Azure cluster (modulo the landscape-specific information like cloud profile names, secret binding names, etc.).
 
-## Provider secret data
+## Provider Secret Data
 
 Every shoot cluster references a `SecretBinding` which itself references a `Secret`, and this `Secret` contains the provider credentials of your Azure subscription.
 This `Secret` must look as follows:
@@ -210,3 +210,10 @@ spec:
     nginxIngress:
       enabled: true
 ```
+
+## CSI volume provisioners
+
+Every Azure shoot cluster that has at least Kubernetes v1.18 will be deployed with the Azure Disk CSI driver and the Azure File CSI driver.
+Both are compatible with the legacy in-tree volume provisioners that were deprecated by the Kubernetes community and will be removed in future versions of Kubernetes.
+End-users might want to update their custom `StorageClass`es to the new `disk.csi.azure.com` or `file.csi.azure.com` provisioner, respectively.
+Shoot clusters with Kubernetes v1.17 or less will use the in-tree `kubernetes.io/azure-disk` and `kubernetes.io/azure-file` volume provisioners in the kube-controller-manager and the kubelet.
